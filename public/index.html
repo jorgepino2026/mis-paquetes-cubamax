@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mis Paquetes - Cubamax</title>
+<style>
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+}
+header {
+    background: linear-gradient(135deg, #075985, #0284c7);
+    color: white;
+    padding: 24px 18px;
+    text-align: center;
+    box-shadow: 0 3px 12px rgba(0,0,0,.15);
+}
+header h1 { margin: 0; font-size: 27px; }
+header p { margin: 7px 0 0; opacity: .9; }
+
+.contenedor { max-width: 1000px; margin: 25px auto; padding: 0 15px; }
+
+.formulario {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.07);
+    margin-bottom: 18px;
+}
+.formulario h2 { margin-top: 0; color: #075985; }
+.fila {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 10px;
+}
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 15px;
+}
+button {
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 17px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+.boton-agregar { background: #0284c7; }
+.boton-agregar:hover { background: #0369a1; }
+.boton-todos {
+    background: #7c3aed;
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+    margin-bottom: 14px;
+}
+.boton-todos:hover { background: #6d28d9; }
+.boton-todos:disabled {
+    background: #a78bfa;
+    cursor: not-allowed;
+}
+
+.buscador {
+    background: white;
+    padding: 12px 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.07);
+    margin-bottom: 14px;
+}
+
+.resumen {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+.resumen-item {
+    background: white;
+    padding: 10px 14px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.resumen-item .punto {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+.resumen-item .num {
+    font-weight: bold;
+    font-size: 16px;
+    color: #0f172a;
+}
+
+#paquetes { display: grid; gap: 14px; }
+.mensaje {
+    background: white;
+    padding: 25px;
+    text-align: center;
+    border-radius: 14px;
+    color: #64748b;
+}
+
+.paquete {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.07);
+    overflow: hidden;
+    border-left: 5px solid #0284c7;
+}
+.resumen-paquete {
+    padding: 18px;
+    cursor: pointer;
+    transition: background .2s;
+}
+.resumen-paquete:hover { background: #f8fafc; }
+.arriba {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.destinatario {
+    font-size: 21px;
+    font-weight: bold;
+    color: #075985;
+}
+.estado {
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.numero-paquete {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+}
+.numero-titulo {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.numero-valor {
+    margin-top: 4px;
+    color: #0f172a;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: .3px;
+}
+.codigo-cubamax {
+    margin-top: 9px;
+    color: #475569;
+    font-size: 14px;
+}
+.ubicacion {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+}
+.ubicacion-titulo {
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.ubicacion-valor {
+    margin-top: 4px;
+    color: #1e3a8a;
+    font-size: 16px;
+    font-weight: bold;
+}
+.indicador {
+    margin-top: 12px;
+    color: #64748b;
+    font-size: 13px;
+}
+.detalle {
+    display: none;
+    padding: 0 18px 18px;
+    border-top: 1px solid #e2e8f0;
+}
+.paquete.abierto .detalle { display: block; }
+.titulo-detalle {
+    margin-top: 18px;
+    margin-bottom: 10px;
+    color: #334155;
+    font-size: 17px;
+    font-weight: bold;
+}
+.movimiento {
+    padding: 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+.movimiento-fecha {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+.movimiento-detalle { line-height: 1.5; }
+
+.historial-item {
+    padding: 13px 14px;
+    margin-bottom: 9px;
+    border-left: 3px solid #38bdf8;
+    background: #f8fafc;
+    border-radius: 0 9px 9px 0;
+}
+.historial-estado { font-weight: bold; color: #075985; }
+.historial-fecha { margin-top: 3px; color: #64748b; font-size: 13px; }
+.historial-detalle { margin-top: 6px; line-height: 1.45; }
+
+.acciones {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 17px;
+}
+.boton-actualizar { background: #16a34a; }
+.boton-actualizar:hover { background: #15803d; }
+.boton-actualizar:disabled {
+    background: #86efac;
+    cursor: not-allowed;
+}
+.boton-eliminar { background: #dc2626; }
+.boton-eliminar:hover { background: #b91c1c; }
+.actualizacion { margin-top: 12px; color: #64748b; font-size: 12px; }
+
+/* Colores por estado */
+.estado-creada { background: #e0e7ff; color: #3730a3; }
+.estado-registrado { background: #fef3c7; color: #92400e; }
+.estado-enviado { background: #dbeafe; color: #1e40af; }
+.estado-arribado { background: #fed7aa; color: #9a3412; }
+.estado-transito { background: #fde68a; color: #854d0e; }
+.estado-aduana { background: #fecaca; color: #991b1b; }
+.estado-entregado { background: #dcfce7; color: #166534; }
+.estado-default { background: #e2e8f0; color: #475569; }
+
+@media (max-width: 700px) {
+    .fila { grid-template-columns: 1fr; }
+    .arriba { align-items: flex-start; }
+    .acciones { flex-direction: column; }
+    .acciones button { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>📦 Mis Paquetes - Cubamax</h1>
+    <p>Seguimiento de tus envíos</p>
+</header>
+
+<div class="contenedor">
+
+    <div class="formulario">
+        <h2>Agregar paquete</h2>
+        <div class="fila">
+            <input id="nombre" type="text" placeholder="Primer nombre">
+            <input id="numero" type="text" placeholder="Número del paquete">
+            <button class="boton-agregar" onclick="agregarPaquete()">Agregar</button>
+        </div>
+    </div>
+
+    <button class="boton-todos" id="botonTodos" onclick="actualizarTodos()">
+        🔄 Actualizar TODOS los paquetes ahora
+    </button>
+
+    <div class="buscador">
+        <input id="buscar" type="text" placeholder="🔍 Buscar por nombre o número de paquete..." oninput="filtrar()">
+    </div>
+
+    <div class="resumen" id="resumen"></div>
+
+    <div id="paquetes">
+        <div class="mensaje">Cargando paquetes...</div>
+    </div>
+
+</div>
+
+<script>
+
+let TODOS = [];
+let FILTRO = "";
+
+function escapar(texto) {
+    if (texto === null || texto === undefined) return "";
+    return String(texto)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function escaparJS(texto) {
+    return String(texto || "")
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'")
+        .replace(/\r/g, "\\r")
+        .replace(/\n/g, "\\n");
+}
+
+function claseEstado(estado) {
+    const e = (estado || "").toUpperCase();
+    if (e.includes("ENTREGADO")) return "estado-entregado";
+    if (e.includes("TRÁNSITO") || e.includes("TRANSITO")) return "estado-transito";
+    if (e.includes("ARRIBADO")) return "estado-arribado";
+    if (e.includes("ADUANA")) return "estado-aduana";
+    if (e.includes("ENVIADO")) return "estado-enviado";
+    if (e.includes("REGISTRADO")) return "estado-registrado";
+    if (e.includes("CREADA")) return "estado-creada";
+    return "estado-default";
+}
+
+async function cargarPaquetes() {
+    const contenedor = document.getElementById("paquetes");
+    try {
+        const respuesta = await fetch("/api/paquetes");
+        const datos = await respuesta.json();
+
+        TODOS = datos.paquetes || [];
+        renderizar();
+    } catch (error) {
+        console.error(error);
+        contenedor.innerHTML = `<div class="mensaje">Error cargando los paquetes.</div>`;
+    }
+}
+
+function filtrar() {
+    FILTRO = document.getElementById("buscar").value.trim().toLowerCase();
+    renderizar();
+}
+
+function renderizar() {
+    const contenedor = document.getElementById("paquetes");
+
+    if (!TODOS || TODOS.length === 0) {
+        contenedor.innerHTML = `<div class="mensaje">No hay paquetes registrados.</div>`;
+        document.getElementById("resumen").innerHTML = "";
+        return;
+    }
+
+    // Resumen
+    const cuenta = {};
+    TODOS.forEach(p => {
+        const e = p.estado || "Sin consultar";
+        cuenta[e] = (cuenta[e] || 0) + 1;
+    });
+
+    document.getElementById("resumen").innerHTML = `
+        <div class="resumen-item">
+            <span class="num">${TODOS.length}</span>
+            <span>Total paquetes</span>
+        </div>
+        ${Object.entries(cuenta).map(([estado, n]) => `
+            <div class="resumen-item">
+                <span class="punto" style="background: ${
+                    estado.includes("ENTREGADO") ? "#16a34a" :
+                    estado.includes("TRÁNSITO") || estado.includes("TRANSITO") ? "#d97706" :
+                    estado.includes("ARRIBADO") ? "#ea580c" :
+                    estado.includes("ADUANA") ? "#dc2626" :
+                    estado.includes("ENVIADO") ? "#2563eb" :
+                    estado.includes("REGISTRADO") ? "#ca8a04" :
+                    "#64748b"
+                }"></span>
+                <span class="num">${n}</span>
+                <span>${escapar(estado)}</span>
+            </div>
+        `).join("")}
+    `;
+
+    // Filtrar
+    const filtrados = FILTRO
+        ? TODOS.filter(p =>
+            (p.nombre || "").toLowerCase().includes(FILTRO) ||
+            (p.numero || "").toLowerCase().includes(FILTRO) ||
+            (p.paqueteCubamax || "").toLowerCase().includes(FILTRO)
+        )
+        : TODOS;
+
+    if (filtrados.length === 0) {
+        contenedor.innerHTML = `<div class="mensaje">No se encontraron paquetes con ese filtro.</div>`;
+        return;
+    }
+
+    contenedor.innerHTML = filtrados.map(crearTarjeta).join("");
+}
+
+function crearTarjeta(paquete) {
+
+    const historial = Array.isArray(paquete.historial) ? paquete.historial : [];
+    const ultimo = paquete.ultimoMovimiento || null;
+    const numeroPaquete = paquete.numero || "-";
+    const codigoCubamax = paquete.paqueteCubamax || "-";
+    const destinatario = paquete.destinatario || paquete.nombre || "-";
+    const estado = paquete.estado || "Sin consultar";
+    const ubicacion = paquete.ubicacion || "Por determinar";
+    const clase = claseEstado(estado);
+
+    return `
+        <div class="paquete" id="paquete-${Number(paquete.id)}">
+            <div class="resumen-paquete" onclick="abrirPaquete(${Number(paquete.id)})">
+                <div class="arriba">
+                    <div class="destinatario">👤 ${escapar(destinatario)}</div>
+                    <div class="estado ${clase}">${escapar(estado)}</div>
+                </div>
+                <div class="numero-paquete">
+                    <div class="numero-titulo">📦 Número del paquete</div>
+                    <div class="numero-valor">${escapar(numeroPaquete)}</div>
+                </div>
+                <div class="codigo-cubamax">
+                    Código Cubamax: <strong>${escapar(codigoCubamax)}</strong>
+                </div>
+                <div class="ubicacion">
+                    <div class="ubicacion-titulo">📍 Ubicación actual</div>
+                    <div class="ubicacion-valor">${escapar(ubicacion)}</div>
+                </div>
+                <div class="indicador">👆 Pulsa para ver último movimiento e historial</div>
+            </div>
+            <div class="detalle">
+                <div class="titulo-detalle">📌 Último movimiento</div>
+                ${
+                    ultimo
+                        ? `
+                        <div class="movimiento">
+                            <div class="movimiento-fecha">${escapar(ultimo.fecha)}</div>
+                            <div class="movimiento-detalle">
+                                <strong>${escapar(ultimo.estado)}</strong>
+                                ${ultimo.detalle ? `<br><br>${escapar(ultimo.detalle)}` : ""}
+                            </div>
+                        </div>
+                        `
+                        : `
+                        <div class="movimiento">Todavía no hay información de movimientos.</div>
+                        `
+                }
+
+                ${
+                    historial.length > 0
+                        ? `
+                        <div class="titulo-detalle">📋 Historial completo</div>
+                        <div>
+                            ${historial.map(m => `
+                                <div class="historial-item">
+                                    <div class="historial-estado">${escapar(m.estado)}</div>
+                                    <div class="historial-fecha">${escapar(m.fecha)}</div>
+                                    ${m.detalle ? `<div class="historial-detalle">${escapar(m.detalle)}</div>` : ""}
+                                </div>
+                            `).join("")}
+                        </div>
+                        `
+                        : ""
+                }
+
+                <div class="actualizacion">
+                    Última consulta: ${escapar(paquete.ultimaActualizacion || "Nunca")}
+                </div>
+
+                <div class="acciones" onclick="event.stopPropagation()">
+                    <button class="boton-actualizar"
+                        onclick="actualizar('${escaparJS(paquete.numero)}','${escaparJS(paquete.nombre)}', this)">
+                        🔄 Actualizar estado
+                    </button>
+                    <button class="boton-eliminar"
+                        onclick="eliminarPaquete(${Number(paquete.id)})">
+                        🗑️ Eliminar paquete
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function abrirPaquete(id) {
+    const paquete = document.getElementById(`paquete-${id}`);
+    if (!paquete) return;
+    paquete.classList.toggle("abierto");
+}
+
+async function agregarPaquete() {
+    const nombre = document.getElementById("nombre").value.trim();
+    const numero = document.getElementById("numero").value.trim();
+
+    if (!nombre || !numero) {
+        alert("Escribe el nombre y el número del paquete.");
+        return;
+    }
+
+    try {
+        const respuesta = await fetch("/api/paquetes", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nombre, numero })
+        });
+        const resultado = await respuesta.json();
+
+        if (!resultado.ok) {
+            alert(resultado.error || "No se pudo agregar el paquete.");
+            return;
+        }
+
+        document.getElementById("nombre").value = "";
+        document.getElementById("numero").value = "";
+        await cargarPaquetes();
+
+    } catch (error) {
+        console.error(error);
+        alert("Error conectando con el servidor.");
+    }
+}
+
+async function actualizar(numero, nombre, boton) {
+    if (boton) {
+        boton.disabled = true;
+        boton.textContent = "⏳ Consultando...";
+    }
+
+    try {
+        const respuesta = await fetch("/api/rastrear", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ numero, nombre })
+        });
+
+        const resultado = await respuesta.json();
+
+        if (!resultado.ok) {
+            alert(resultado.error || "No se pudo consultar el paquete.");
+            return;
+        }
+
+        await cargarPaquetes();
+
+    } catch (error) {
+        console.error(error);
+        alert("Error consultando Cubamax.");
+    } finally {
+        if (boton) {
+            boton.disabled = false;
+            boton.textContent = "🔄 Actualizar estado";
+        }
+    }
+}
+
+async function actualizarTodos() {
+    if (!confirm("Esto consulta cada paquete uno por uno y puede tardar varios minutos. ¿Continuar?")) {
+        return;
+    }
+
+    const boton = document.getElementById("botonTodos");
+    boton.disabled = true;
+    boton.textContent = "⏳ Actualizando todos... puede tardar varios minutos. NO cierres el servidor.";
+
+    try {
+        const respuesta = await fetch("/api/actualizar-todos", { method: "POST" });
+        const resultado = await respuesta.json();
+
+        if (!resultado.ok) {
+            alert(resultado.error || "Error actualizando.");
+            return;
+        }
+
+        await cargarPaquetes();
+
+    } catch (error) {
+        console.error(error);
+        alert("Error actualizando todos los paquetes.");
+    } finally {
+        boton.disabled = false;
+        boton.textContent = "🔄 Actualizar TODOS los paquetes ahora";
+    }
+}
+
+async function eliminarPaquete(id) {
+    if (!confirm("¿Seguro que quieres eliminar este paquete?")) return;
+
+    try {
+        const respuesta = await fetch(`/api/paquetes/${id}`, { method: "DELETE" });
+        const resultado = await respuesta.json();
+
+        if (!resultado.ok) {
+            alert(resultado.error || "No se pudo eliminar el paquete.");
+            return;
+        }
+
+        await cargarPaquetes();
+
+    } catch (error) {
+        console.error(error);
+        alert("Error eliminando el paquete.");
+    }
+}
+
+cargarPaquetes();
+setInterval(cargarPaquetes, 30000);
+
+</script>
+
+</body>
+</html>
